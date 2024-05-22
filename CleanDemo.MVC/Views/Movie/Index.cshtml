@@ -1,0 +1,44 @@
+﻿@model CleanDemo.MVC.ViewModels.MovieGenreViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="red-text">Movies</h1>
+
+<p>
+    <button class="btn greenBTN"> <a asp-action="Create" class="noUnderline text-white">Create New</a></button>
+</p>
+
+<form asp-controller="Movie" asp-action="Index" method="get">
+    <p>
+        <select class="filterDropDown" asp-for="MovieGenre" asp-items="@Model.Genres">
+            <option value="">Filter by Genre</option>
+        </select>
+        <input class="filterSearch" type="text" asp-for="SearchString" placeholder="Search" />
+        <input class="btn btn-primary mb-1" type="submit" value="Filter" />
+    </p>
+</form>
+
+<div class="row">
+    @foreach (var item in Model.Movies)
+    {
+        <div class="col-md-4 col-lg-3 mb-3">
+            <div class="card flex-fill h-100">
+                <div class="card-body text-center">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">Release Date: @Html.DisplayFor(modelItem => item.ReleaseDate)</p>
+                    <p class="card-text">Genre: @Html.DisplayFor(modelItem => item.Genre)</p>
+                    <p class="card-text">Price: @Html.DisplayFor(modelItem => item.Price)</p>
+                    <p class="card-text">Rating: @Html.DisplayFor(modelItem => item.Rating)</p>
+                    <div class="btn-group mt-auto">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm blueBTN m-1">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm orangeBTN m-1">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm redBTN m-1">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

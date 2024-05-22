@@ -1,0 +1,61 @@
+﻿@model Clean.MVC.ViewModels.MovieViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="CRUDpage">
+    <h1>Details</h1>
+
+    <div>
+        <h4>Movie</h4>
+        <hr />
+        <dl class="row ">
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.ReleaseDate)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Genre)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Genre)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Rating)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Rating)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                Image
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                <img src="@Model.ImageUrl" alt="Movie Image" style="max-width: 200px;" />
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <button class="btn greenBTN">
+            <a class="noUnderline text-white" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+        </button>
+        |
+        <button class="btn grayBTN">
+            <a class="noUnderline text-white" asp-action="Index">Back</a>
+        </button>
+    </div>
+
+</div>

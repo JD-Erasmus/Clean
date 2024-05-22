@@ -1,0 +1,54 @@
+﻿@model Clean.MVC.ViewModels.MovieViewModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+<div class="CRUDpage">
+    <h1>Delete</h1>
+
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>Movie</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.ReleaseDate)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Genre)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Genre)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+            <dt class="col-sm-6 tabletitle">
+                @Html.DisplayNameFor(model => model.Rating)
+            </dt>
+            <dd class="col-sm-6 tabledata">
+                @Html.DisplayFor(model => model.Rating)
+            </dd>
+        </dl>
+
+        <form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post">
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            <button class="btn grayBTN">
+                <a class="noUnderline text-white" asp-action="Index">Back</a>
+            </button>
+        </form>
+    </div>
+
+</div>

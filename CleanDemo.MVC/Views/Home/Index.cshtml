@@ -1,0 +1,35 @@
+﻿@model  List<Clean.MVC.ViewModels.MovieViewModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4 text-white">Welcome To <span class="red-text">.NETflix</span></h1>
+    <h2 class="display-4 text-white">Featured Movies</h2>
+    @* Movie Section *@
+    <div class="swiper homeSwiper">
+        <div class="swiper-wrapper p-1">
+            @for (int i = 0; i < Model.Count; i += 4)
+            {
+                <div class="swiper-slide">
+                    <div class="d-flex">
+                        @for (int j = i; j < i + 4 && j < Model.Count; j++)
+                        {
+                            var movieItem = Model[j];
+                            <div class="p-2" style="flex: 1;">
+                                <img src="@movieItem.ImageUrl" alt="@movieItem.Title">
+                                <div class="slide-text">@movieItem.Title</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="swiper-button-next SwiperNavBtn"></div>
+        <div class="swiper-button-prev SwiperNavBtn"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <button class="btn btn-primary "> <a asp-controller="Movies" asp-action="Index" class="text-white noUnderline">View More</a></button>
+   </div>
