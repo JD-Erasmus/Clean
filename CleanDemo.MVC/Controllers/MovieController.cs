@@ -6,6 +6,8 @@ using System.Linq;
 using Clean.MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CleanDemo.MVC.ViewModels;
+using AutoMapper;
+using Clean.MVC.MappingProfiles;
 namespace CleanDemo.MVC.Controllers
 {
   
@@ -13,10 +15,11 @@ namespace CleanDemo.MVC.Controllers
     public class MovieController : Controller
     {
         private readonly IMovieService _movieService;
-
-        public MovieController(IMovieService movieService)
+        private readonly IMapper _mapper;
+        public MovieController(IMovieService movieService, IMapper mapper)
         {
             _movieService = movieService;
+            _mapper = mapper;
         }
 
         public IActionResult Index(string searchString, string movieGenre)
@@ -61,6 +64,14 @@ namespace CleanDemo.MVC.Controllers
                 // Check if an image file was uploaded
                 if (viewModel.ImageFile != null && viewModel.ImageFile.Length > 0)
                 {
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".webp", ".svg", ".png" };
+                    var fileExtension = Path.GetExtension(viewModel.ImageFile.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError("ImageFile", "Invalid file format. Please upload a JPG, WEBP, or SVG file.");
+                        return View(viewModel);
+                    }
                     // Generate a unique filename for the uploaded image
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + viewModel.ImageFile.FileName;
 
@@ -76,20 +87,13 @@ namespace CleanDemo.MVC.Controllers
                 }
 
                 // Create a new Movie object using the ViewModel data
-                var movie = new Movie
-                {
-                    Title = viewModel.Title,
-                    ReleaseDate = viewModel.ReleaseDate,
-                    Genre = viewModel.Genre,
-                    Price = viewModel.Price,
-                    Rating = viewModel.Rating,
-                    ImageUrl = viewModel.ImageUrl
-                };
+                /*change to use auto mapper*/
+                var movie = _mapper.Map<Movie>(viewModel);
 
                 // Add the movie to the database using the MovieService
                 await _movieService.AddMovie(movie);
-
-                // Redirect to the Index action after successful addition
+                TempData["SuccessMessage"] = "Added New Movie Successfully.";
+                
                 return RedirectToAction(nameof(Index));
             }
             //PRINT ERRORS OF INVALID MODELSTATE
@@ -164,6 +168,14 @@ namespace CleanDemo.MVC.Controllers
                 // Check if an image file was uploaded
                 if (viewModel.ImageFile != null && viewModel.ImageFile.Length > 0)
                 {
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".webp", ".svg", ".png" };
+                    var fileExtension = Path.GetExtension(viewModel.ImageFile.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError("ImageFile", "Invalid file format. Please upload a JPG, WEBP, or SVG file.");
+                        return View(viewModel);
+                    }
                     // Generate a unique filename for the uploaded image
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + viewModel.ImageFile.FileName;
 
@@ -181,7 +193,7 @@ namespace CleanDemo.MVC.Controllers
 
                 // Update the movie in the database using the MovieService
                 await _movieService.UpdateMovie(id, existingMovie);
-
+                TempData["SuccessMessage"] = "Edited Movie Successfully.";
                 // Redirect to the Index action after successful update
                 return RedirectToAction(nameof(Index));
             }
@@ -218,16 +230,14 @@ namespace CleanDemo.MVC.Controllers
         {
             try
             {
-                // Call the DeleteMovie method of the IMovieService interface
                 await _movieService.DeleteMovie(id);
-                // Redirect to the Index action after successful deletion
+                TempData["SuccessMessage"] = "Movie deleted successfully.";
+                
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                // Handle any exceptions that may occur during deletion
-                // You can log the exception or display an error message to the user
-                return RedirectToAction("Error", "Home"); // Example: Redirect to an error page
+                return RedirectToAction("Error", "Home"); 
             }
         }
         public async Task<IActionResult> Details(int? id)

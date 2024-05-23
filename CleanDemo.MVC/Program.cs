@@ -2,6 +2,8 @@ using Clean.Infra.Data.Context;
 using Clean.Infrastructure.IoC;
 using Clean.Infra.Data.Seed;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using Clean.MVC.MappingProfiles;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,8 @@ void RegisterServices(IServiceCollection services)
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MovieDbContext")));

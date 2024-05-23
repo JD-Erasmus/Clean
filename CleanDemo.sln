@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clean.Application", "Clean.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clean.Infrastructure.IoC", "Clean.Infrastructure.IoC\Clean.Infrastructure.IoC.csproj", "{C7BDB07E-1D69-41A3-9FF7-C6B417A5EF4F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcMovie", "..\MvcMovie\MvcMovie\MvcMovie.csproj", "{CE51EEA9-60BF-4EE9-85AA-7A2FDA99F4C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{C7BDB07E-1D69-41A3-9FF7-C6B417A5EF4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7BDB07E-1D69-41A3-9FF7-C6B417A5EF4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7BDB07E-1D69-41A3-9FF7-C6B417A5EF4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE51EEA9-60BF-4EE9-85AA-7A2FDA99F4C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE51EEA9-60BF-4EE9-85AA-7A2FDA99F4C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE51EEA9-60BF-4EE9-85AA-7A2FDA99F4C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE51EEA9-60BF-4EE9-85AA-7A2FDA99F4C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

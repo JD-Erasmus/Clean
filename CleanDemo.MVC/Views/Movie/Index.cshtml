@@ -19,7 +19,12 @@
         <input class="btn btn-primary mb-1" type="submit" value="Filter" />
     </p>
 </form>
-
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="successMessage" class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
 <div class="row">
     @foreach (var item in Model.Movies)
     {
@@ -42,3 +47,13 @@
         </div>
     }
 </div>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Slide up and disappear after 5 seconds
+            $('#successMessage').delay(3000).slideUp(500, function () {
+                $(this).remove();
+            });
+        });
+    </script>
+}
