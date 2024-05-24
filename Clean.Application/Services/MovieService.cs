@@ -1,55 +1,56 @@
-﻿using Clean.Application.Interfaces;
+﻿using Clean.Domain.Models;
 using Clean.Domain.Interfaces;
-using Clean.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Clean.Application.Interfaces;
+
 namespace Clean.Application.Services
 {
-    
-
     public class MovieService : IMovieService
     {
-        private readonly IMovieRepository _movieRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public MovieService(IMovieRepository movieRepository)
+        public MovieService(IUnitOfWork unitOfWork)
         {
-            _movieRepository = movieRepository;
-        }
-
-        public IEnumerable<Movie> GetMovies()
-        {
-            return _movieRepository.GetMovies();
-        }
-        public IEnumerable<string> GetGenres()
-        {
-            return _movieRepository.GetMovies().Select(m => m.Genre).Distinct();
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task AddMovie(Movie movie)
+        public async Task<IEnumerable<Movie>> GetMoviesAsync()
         {
-            await _movieRepository.AddMovie(movie);
+            return await _unitOfWork.Movies.GetMoviesAsync();
         }
-        public async Task UpdateMovie(int id, Movie movie)
-        {
-            await _movieRepository.UpdateMovie(id, movie);
-        }
-        public async Task<Movie> GetMovieByIdAsync(int id)  
-        {
-            return await _movieRepository.GetMovieByIdAsync(id);
-        }
-        public async Task DeleteMovie(int id)
-        {
-            // Retrieve the movie by its ID
-            var movie = await _movieRepository.GetMovieByIdAsync(id);
 
-            if (movie == null)
+        public async Task<IEnumerable<string>> GetGenresAsync()
+        {
+            // Implement GetGenresAsync in the repository
+            return await _unitOfWork.Movies.GetGenresAsync();
+        }
+
+        public async Task AddMovieAsync(Movie movie)
+        {
+            await _unitOfWork.Movies.AddMovieAsync(movie);
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task<Movie> GetMovieByIdAsync(int id)
+        {
+            return await _unitOfWork.Movies.GetMovieByIdAsync(id);
+        }
+
+        public async Task UpdateMovieAsync(int id, Movie movie)
+        {
+            await _unitOfWork.Movies.UpdateMovieAsync(id, movie);
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task DeleteMovieAsync(int id)
+        {
+            var movie = await _unitOfWork.Movies.GetMovieByIdAsync(id);
+            if (movie != null)
             {
-                // If the movie does not exist, throw an exception or handle accordingly
-                throw new ApplicationException($"Movie with ID {id} not found.");
+                await _unitOfWork.Movies.DeleteMovieAsync(movie);
+                await _unitOfWork.CompleteAsync();
             }
-
-            // Call the DeleteMovie method of the repository to delete the movie
-            await _movieRepository.DeleteMovie(movie);
         }
     }
 }

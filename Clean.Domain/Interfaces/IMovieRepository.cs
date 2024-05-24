@@ -1,13 +1,16 @@
 ﻿using Clean.Domain.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Clean.Domain.Interfaces
 {
     public interface IMovieRepository
     {
-        IEnumerable<Movie> GetMovies();
-        Task AddMovie(Movie movie);
-        Task UpdateMovie(int id, Movie movie);
+        Task<IEnumerable<Movie>> GetMoviesAsync();
+        Task<IEnumerable<string>> GetGenresAsync();
+        Task AddMovieAsync(Movie movie);
+        Task UpdateMovieAsync(int id, Movie movie);
         Task<Movie> GetMovieByIdAsync(int id);
-        Task DeleteMovie(Movie movie);
+        Task DeleteMovieAsync(Movie movie);
     }
 }

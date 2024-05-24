@@ -3,6 +3,7 @@ using CleanDemo.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Clean.MVC.ViewModels;
+using AutoMapper;
 
 
 namespace CleanDemo.MVC.Controllers
@@ -11,26 +12,22 @@ namespace CleanDemo.MVC.Controllers
     {
         private readonly IMovieService _movieService;
         private readonly ILogger<HomeController> _logger;
+        private readonly IMapper _mapper;
 
-        public HomeController(IMovieService movieService, ILogger<HomeController> logger)
+        public HomeController(IMovieService movieService, ILogger<HomeController> logger, IMapper mapper)
         {
             _movieService = movieService;
             _logger = logger;
+            _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var movies = _movieService.GetMovies();
-            var movieViewModels = movies.Select(movie => new MovieViewModel
-            {
-                Id = movie.Id,
-                Title = movie.Title,
-                ReleaseDate = movie.ReleaseDate,
-                Genre = movie.Genre,
-                Price = movie.Price,
-                Rating = movie.Rating,
-                ImageUrl = movie.ImageUrl
-            }).ToList();
+            // Fetch all movies asynchronously
+            var movies = await _movieService.GetMoviesAsync();
+
+            // Map Movie entities to MovieViewModels
+            var movieViewModels = _mapper.Map<IEnumerable<MovieViewModel>>(movies);
 
             return View(movieViewModels);
         }

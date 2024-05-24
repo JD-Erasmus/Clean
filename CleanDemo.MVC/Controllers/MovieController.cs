@@ -22,18 +22,15 @@ namespace CleanDemo.MVC.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index(string searchString, string movieGenre)
-        {
-            // Get all movies
-            var movies = _movieService.GetMovies();
-
-            // Populate genres for the dropdown menu
-            var genres = _movieService.GetGenres();
+        public async Task<IActionResult> Index(string searchString, string movieGenre)
+        {// Get all movies and genres
+            var movies = await _movieService.GetMoviesAsync();
+            var genres = await _movieService.GetGenresAsync();
 
             // Filter movies based on search string and genre selection
             if (!string.IsNullOrEmpty(searchString))
             {
-                movies = movies.Where(m => m.Title.Contains(searchString));
+                movies = movies.Where(m => m.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(movieGenre))
             {
@@ -91,7 +88,7 @@ namespace CleanDemo.MVC.Controllers
                 var movie = _mapper.Map<Movie>(viewModel);
 
                 // Add the movie to the database using the MovieService
-                await _movieService.AddMovie(movie);
+                await _movieService.AddMovieAsync(movie);
                 TempData["SuccessMessage"] = "Added New Movie Successfully.";
                 
                 return RedirectToAction(nameof(Index));
@@ -192,7 +189,7 @@ namespace CleanDemo.MVC.Controllers
                
 
                 // Update the movie in the database using the MovieService
-                await _movieService.UpdateMovie(id, existingMovie);
+                await _movieService.UpdateMovieAsync(id, existingMovie);
                 TempData["SuccessMessage"] = "Edited Movie Successfully.";
                 // Redirect to the Index action after successful update
                 return RedirectToAction(nameof(Index));
@@ -230,7 +227,7 @@ namespace CleanDemo.MVC.Controllers
         {
             try
             {
-                await _movieService.DeleteMovie(id);
+                await _movieService.DeleteMovieAsync(id);
                 TempData["SuccessMessage"] = "Movie deleted successfully.";
                 
                 return RedirectToAction(nameof(Index));

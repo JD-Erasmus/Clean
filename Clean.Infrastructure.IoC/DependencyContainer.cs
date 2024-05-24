@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Clean.Infra.Data;
 
 
 namespace Clean.Infrastructure.IoC
@@ -24,8 +25,9 @@ namespace Clean.Infrastructure.IoC
 
             //CleanArchitecture.Domain.Interfaces | CleanArchitecture.Infra.Data.Repositories
             services.AddScoped<IMovieRepository, MovieRepository>();
+            //CleanArchitecture.Domain.Interfaces | CleanArchitecture.Infra.Data
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-      
         }
     }
 }
