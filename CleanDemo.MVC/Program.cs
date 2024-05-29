@@ -4,7 +4,11 @@ using Clean.Infra.Data.Seed;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Clean.MVC.MappingProfiles;
-
+using System;
+using System.IO;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 void RegisterServices(IServiceCollection services)
@@ -20,8 +24,37 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MovieDbContext")));
 
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbContext")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<AuthDbContext>();
+
+
+// Configure the audit to write to the "Event" folder
+var eventFolderPath = builder.Configuration.GetValue<string>("EventFolderPath");
+/*var logFileName = $"{DateTime.Now:yyyyMMdd}_audit.log";*/
+var logFileName = $"logger_audit.log";
+var logFilePath = Path.Combine(eventFolderPath, logFileName);
+
+// Ensure the directory exists
+if (!Directory.Exists(eventFolderPath))
+{
+    Directory.CreateDirectory(eventFolderPath);
+}
+
+Audit.Core.Configuration.Setup()
+    .UseFileLogProvider(config => config
+        .Directory(eventFolderPath)
+        .FilenameBuilder(ev => logFileName));
+
 RegisterServices(builder.Services);
 var app = builder.Build();
+
+
 // Run seed data
 using (var scope = app.Services.CreateScope())
 {
@@ -52,10 +85,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.MapRazorPages();
 app.Run();

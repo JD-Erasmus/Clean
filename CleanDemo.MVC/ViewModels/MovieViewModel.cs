@@ -1,5 +1,6 @@
 ﻿using Clean.Domain.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 
 namespace Clean.MVC.ViewModels
 {
@@ -7,6 +8,8 @@ namespace Clean.MVC.ViewModels
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        [Display(Name = "Release Date")]
+        [DataType(DataType.Date)]
         public DateTime ReleaseDate { get; set; }
         public string Genre { get; set; }
         public decimal Price { get; set; }

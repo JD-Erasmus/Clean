@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Clean.MVC.ViewModels;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace CleanDemo.MVC.Controllers
@@ -11,16 +12,16 @@ namespace CleanDemo.MVC.Controllers
     public class HomeController : Controller
     {
         private readonly IMovieService _movieService;
-        private readonly ILogger<HomeController> _logger;
+        /*private readonly ILogger<HomeController> _logger;*/
         private readonly IMapper _mapper;
 
-        public HomeController(IMovieService movieService, ILogger<HomeController> logger, IMapper mapper)
+        public HomeController(IMovieService movieService, /* ILogger<HomeController> logger,*/ IMapper mapper)
         {
             _movieService = movieService;
-            _logger = logger;
+            /*_logger = logger;*/
             _mapper = mapper;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             // Fetch all movies asynchronously

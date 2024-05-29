@@ -8,22 +8,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using CleanDemo.MVC.ViewModels;
 using AutoMapper;
 using Clean.MVC.MappingProfiles;
+using Audit.Mvc;
+using Microsoft.AspNetCore.Authorization;
 namespace CleanDemo.MVC.Controllers
 {
   
-
     public class MovieController : Controller
     {
         private readonly IMovieService _movieService;
         private readonly IMapper _mapper;
-        public MovieController(IMovieService movieService, IMapper mapper)
+        private readonly ILogger<MovieController> _logger;
+        public MovieController(IMovieService movieService, IMapper mapper, ILogger<MovieController> logger)
         {
             _movieService = movieService;
             _mapper = mapper;
+            _logger = logger;
         }
+        [Authorize]
 
         public async Task<IActionResult> Index(string searchString, string movieGenre)
-        {// Get all movies and genres
+        {
             var movies = await _movieService.GetMoviesAsync();
             var genres = await _movieService.GetGenresAsync();
 
@@ -46,69 +50,67 @@ namespace CleanDemo.MVC.Controllers
 
             return View(viewModel);
         }
-
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
+       
+        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MovieViewModel viewModel)
         {
-           
-            if (ModelState.IsValid)
-            {
-                // Check if an image file was uploaded
-                if (viewModel.ImageFile != null && viewModel.ImageFile.Length > 0)
+            try {
+                if (ModelState.IsValid)
                 {
-                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".webp", ".svg", ".png" };
-                    var fileExtension = Path.GetExtension(viewModel.ImageFile.FileName).ToLower();
-
-                    if (!allowedExtensions.Contains(fileExtension))
+                    // Check if an image file was uploaded
+                    if (viewModel.ImageFile != null && viewModel.ImageFile.Length > 0)
                     {
-                        ModelState.AddModelError("ImageFile", "Invalid file format. Please upload a JPG, WEBP, or SVG file.");
-                        return View(viewModel);
-                    }
-                    // Generate a unique filename for the uploaded image
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + viewModel.ImageFile.FileName;
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".webp", ".svg", ".png" };
+                        var fileExtension = Path.GetExtension(viewModel.ImageFile.FileName).ToLower();
 
-                    // Save the uploaded image to the wwwroot/Images/Uploads/Movies directory
-                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Uploads", "Movies", uniqueFileName);
-                    using (var stream = new FileStream(imagePath, FileMode.Create))
-                    {
-                        await viewModel.ImageFile.CopyToAsync(stream);
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("ImageFile", "Invalid file format. Please upload a JPG, WEBP, or SVG file.");
+                            return View(viewModel);
+                        }
+                        // Generate a unique filename for the uploaded image
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + viewModel.ImageFile.FileName;
+
+                        // Save the uploaded image to the wwwroot/Images/Uploads/Movies directory
+                        var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Uploads", "Movies", uniqueFileName);
+                        using (var stream = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await viewModel.ImageFile.CopyToAsync(stream);
+                        }
+
+                        // Set the ImageUrl property of the movie to the relative path of the uploaded image
+                        viewModel.ImageUrl = "/Images/Uploads/Movies/" + uniqueFileName;
                     }
 
-                    // Set the ImageUrl property of the movie to the relative path of the uploaded image
-                    viewModel.ImageUrl = "/Images/Uploads/Movies/" + uniqueFileName;
+                    // Create a new Movie object using the ViewModel data
+                    /*change to use auto mapper*/
+                    var movie = _mapper.Map<Movie>(viewModel);
+
+                    // Add the movie to the database using the MovieService
+                    await _movieService.AddMovieAsync(movie);
+                    TempData["SuccessMessage"] = "Added New Movie Successfully.";
+
+                    return RedirectToAction(nameof(Index));
                 }
-
-                // Create a new Movie object using the ViewModel data
-                /*change to use auto mapper*/
-                var movie = _mapper.Map<Movie>(viewModel);
-
-                // Add the movie to the database using the MovieService
-                await _movieService.AddMovieAsync(movie);
-                TempData["SuccessMessage"] = "Added New Movie Successfully.";
-                
-                return RedirectToAction(nameof(Index));
             }
-            //PRINT ERRORS OF INVALID MODELSTATE
-            /*foreach (var modelStateEntry in ModelState.Values)
-            {
-                foreach (var error in modelStateEntry.Errors)
-                {
-                    // Log or debug the error message
-                    var errorMessage = error.ErrorMessage;
-                    var propertyName = modelStateEntry.AttemptedValue;
-                    // Log or debug the property name causing the error
-                    Console.WriteLine($"Validation error for property '{propertyName}': {errorMessage}");
-                }
-            }*/
+            catch(Exception ex) {
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while creating a new movie.");
+                ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
+            }
 
             // If ModelState is not valid, return the view with the ViewModel
             return View(viewModel);
         }
+        [Authorize]
+        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -136,6 +138,7 @@ namespace CleanDemo.MVC.Controllers
 
             return View(viewModel);
         }
+        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, MovieViewModel viewModel)
@@ -198,6 +201,8 @@ namespace CleanDemo.MVC.Controllers
             // If ModelState is not valid, return the view with the ViewModel
             return View(viewModel);
         }
+        [Authorize]
+        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
         public async Task<IActionResult> Delete(int id)
         {
             var movie = await _movieService.GetMovieByIdAsync(id);
@@ -220,7 +225,7 @@ namespace CleanDemo.MVC.Controllers
             return View(viewModel);
         }
 
-
+        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

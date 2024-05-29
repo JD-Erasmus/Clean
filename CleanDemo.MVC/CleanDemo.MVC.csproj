@@ -7,7 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Event\**" />
+    <Content Remove="Event\**" />
+    <EmbeddedResource Remove="Event\**" />
+    <None Remove="Event\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Audit.Mvc.Core" Version="25.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.30" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.30" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.1.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.30" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.29" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.30" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.30">
       <PrivateAssets>all</PrivateAssets>
@@ -22,7 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\Event\" />
     <Folder Include="wwwroot\Images\Uploads\Movies\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>
