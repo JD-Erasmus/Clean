@@ -6,9 +6,10 @@ using AutoMapper;
 using Clean.MVC.MappingProfiles;
 using System;
 using System.IO;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using CleanDemo.MVC.Audit;
+
 
 var builder = WebApplication.CreateBuilder(args);
 void RegisterServices(IServiceCollection services)
@@ -34,10 +35,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddEntityFrameworkStores<AuthDbContext>();
 
 
-// Configure the audit to write to the "Event" folder
+// Configure the audit to use the custom provider
 var eventFolderPath = builder.Configuration.GetValue<string>("EventFolderPath");
-/*var logFileName = $"{DateTime.Now:yyyyMMdd}_audit.log";*/
-var logFileName = $"logger_audit.log";
+var logFileName = $"{DateTime.Now:yyyyMMdd}_audit.log";
 var logFilePath = Path.Combine(eventFolderPath, logFileName);
 
 // Ensure the directory exists
@@ -46,10 +46,9 @@ if (!Directory.Exists(eventFolderPath))
     Directory.CreateDirectory(eventFolderPath);
 }
 
+// Use the custom audit data provider
 Audit.Core.Configuration.Setup()
-    .UseFileLogProvider(config => config
-        .Directory(eventFolderPath)
-        .FilenameBuilder(ev => logFileName));
+    .UseCustomProvider(new CustomAuditDataProvider(logFilePath));
 
 RegisterServices(builder.Services);
 var app = builder.Build();

@@ -56,7 +56,7 @@ namespace CleanDemo.MVC.Controllers
             return View();
         }
        
-        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
+        [Audit]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MovieViewModel viewModel)
@@ -110,7 +110,7 @@ namespace CleanDemo.MVC.Controllers
             return View(viewModel);
         }
         [Authorize]
-        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
+        [Audit]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -138,8 +138,9 @@ namespace CleanDemo.MVC.Controllers
 
             return View(viewModel);
         }
-        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
+        [Audit]
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, MovieViewModel viewModel)
         {
@@ -202,7 +203,7 @@ namespace CleanDemo.MVC.Controllers
             return View(viewModel);
         }
         [Authorize]
-        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
+       
         public async Task<IActionResult> Delete(int id)
         {
             var movie = await _movieService.GetMovieByIdAsync(id);
@@ -225,7 +226,7 @@ namespace CleanDemo.MVC.Controllers
             return View(viewModel);
         }
 
-        [Audit(EventTypeName = "{controller}_{action}_{verb}")]
+        [Audit]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
