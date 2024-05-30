@@ -55,8 +55,8 @@ namespace CleanDemo.MVC.Controllers
         {
             return View();
         }
-       
-        /*[Audit]*/
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MovieViewModel viewModel)
@@ -109,7 +109,7 @@ namespace CleanDemo.MVC.Controllers
             // If ModelState is not valid, return the view with the ViewModel
             return View(viewModel);
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         /*[Audit]*/
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
@@ -140,7 +140,7 @@ namespace CleanDemo.MVC.Controllers
         }
         /*[Audit]*/
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, MovieViewModel viewModel)
         {
@@ -202,8 +202,8 @@ namespace CleanDemo.MVC.Controllers
             // If ModelState is not valid, return the view with the ViewModel
             return View(viewModel);
         }
-        [Authorize]
-       
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var movie = await _movieService.GetMovieByIdAsync(id);
@@ -225,7 +225,7 @@ namespace CleanDemo.MVC.Controllers
 
             return View(viewModel);
         }
-
+        [Authorize(Roles = "Admin")]
         /*[Audit]*/
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -243,6 +243,7 @@ namespace CleanDemo.MVC.Controllers
                 return RedirectToAction("Error", "Home"); 
             }
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
