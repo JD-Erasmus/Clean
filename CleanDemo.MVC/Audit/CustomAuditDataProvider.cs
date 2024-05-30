@@ -62,4 +62,5 @@ namespace CleanDemo.MVC.Audit
             // No implementation required for file-based logging
         }
     }
+
 }

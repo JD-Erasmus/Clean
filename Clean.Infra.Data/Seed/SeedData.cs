@@ -14,6 +14,9 @@ namespace Clean.Infra.Data.Seed
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
+            // Seed users
+            UserSeedingService.SeedAdminUserAsync(serviceProvider).Wait();
+            // Seed Movies
             using (var context = new MovieDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<MovieDbContext>>()))
             {
@@ -44,6 +47,7 @@ namespace Clean.Infra.Data.Seed
                 );
                 context.SaveChanges();
             }
+            
         }
     }
 }

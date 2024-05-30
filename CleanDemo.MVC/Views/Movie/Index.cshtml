@@ -1,4 +1,5 @@
 ﻿@model CleanDemo.MVC.ViewModels.MovieGenreViewModel
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
@@ -7,7 +8,10 @@
 <h1 class="red-text">Movies</h1>
 
 <p>
-    <button class="btn greenBTN"> <a asp-action="Create" class="noUnderline text-white">Create New</a></button>
+    @if (User.IsInRole("Admin"))
+    {
+        <button class="btn greenBTN"> <a asp-action="Create" class="noUnderline text-white">Create New</a></button>
+    }
 </p>
 
 <form asp-controller="Movie" asp-action="Index" method="get">
@@ -37,11 +41,14 @@
                     <p class="card-text">Genre: @Html.DisplayFor(modelItem => item.Genre)</p>
                     <p class="card-text">Price: @Html.DisplayFor(modelItem => item.Price)</p>
                     <p class="card-text">Rating: @Html.DisplayFor(modelItem => item.Rating)</p>
-                    <div class="btn-group mt-auto">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm blueBTN m-1">Details</a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm orangeBTN m-1">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm redBTN m-1">Delete</a>
-                    </div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="btn-group mt-auto">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm blueBTN m-1">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm orangeBTN m-1">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm redBTN m-1">Delete</a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

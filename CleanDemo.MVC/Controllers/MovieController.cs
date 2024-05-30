@@ -12,7 +12,7 @@ using Audit.Mvc;
 using Microsoft.AspNetCore.Authorization;
 namespace CleanDemo.MVC.Controllers
 {
-  
+    [Audit]
     public class MovieController : Controller
     {
         private readonly IMovieService _movieService;
@@ -50,13 +50,13 @@ namespace CleanDemo.MVC.Controllers
 
             return View(viewModel);
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
        
-        [Audit]
+        /*[Audit]*/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MovieViewModel viewModel)
@@ -110,7 +110,7 @@ namespace CleanDemo.MVC.Controllers
             return View(viewModel);
         }
         [Authorize]
-        [Audit]
+        /*[Audit]*/
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -138,7 +138,7 @@ namespace CleanDemo.MVC.Controllers
 
             return View(viewModel);
         }
-        [Audit]
+        /*[Audit]*/
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -226,7 +226,7 @@ namespace CleanDemo.MVC.Controllers
             return View(viewModel);
         }
 
-        [Audit]
+        /*[Audit]*/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
