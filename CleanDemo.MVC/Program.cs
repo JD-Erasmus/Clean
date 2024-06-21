@@ -44,6 +44,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<AuthDbContext>();
 
+// ========================================
+// Configure Audit Trial
+// ========================================
 // Configure custom audit provider
 var eventFolderPath = builder.Configuration.GetValue<string>("EventFolderPath");
 var logFileName = $"{DateTime.Now:yyyyMMdd}_audit.log";

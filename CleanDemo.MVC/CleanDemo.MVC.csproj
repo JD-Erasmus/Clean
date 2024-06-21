@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Audit.Mvc.Core" Version="25.0.4" />
+    <PackageReference Include="Audit.NET.SqlServer" Version="25.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.30" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.30" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.1.11" />
