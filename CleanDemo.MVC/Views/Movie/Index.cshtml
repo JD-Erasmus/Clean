@@ -8,10 +8,9 @@
 <h1 class="red-text">Movies</h1>
 
 <p>
-    @if (User.IsInRole("Admin"))
-    {
+    
         <button class="btn greenBTN"> <a asp-action="Create" class="noUnderline text-white">Create New</a></button>
-    }
+    
 </p>
 
 <form asp-controller="Movie" asp-action="Index" method="get">

@@ -10,6 +10,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using CleanDemo.MVC.Audit;
 using Microsoft.Extensions.Logging;
+using Audit.Core;
+using Audit.SqlServer.Providers;
+using System.Data.SqlClient;
+using Audit.SqlServer;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,23 +50,37 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<AuthDbContext>();
 
-// ========================================
-// Configure Audit Trial
-// ========================================
-// Configure custom audit provider
-var eventFolderPath = builder.Configuration.GetValue<string>("EventFolderPath");
-var logFileName = $"{DateTime.Now:yyyyMMdd}_audit.log";
-var logFilePath = Path.Combine(eventFolderPath, logFileName);
 
-// Ensure the audit log directory exists
-if (!Directory.Exists(eventFolderPath))
+// ========================================
+// Configure Audit Trail
+// ========================================
+
+string auditConnectionString = builder.Configuration.GetConnectionString("MovieDbContext");
+Audit.Core.Configuration.DataProvider = new SqlDataProvider()
 {
-    Directory.CreateDirectory(eventFolderPath);
-}
+    ConnectionString = auditConnectionString,
+    Schema = "dbo",
+    TableName = "Event",
+    IdColumnName = "EventId",
+    JsonColumnName = "JsonData",
+    LastUpdatedDateColumnName = "LastUpdatedDate",
+    CustomColumns = new List<CustomColumn>()
+    {
+        new CustomColumn("EventType", ev => ev.EventType),
+        new CustomColumn("Username", ev => GetJsonValue(ev, "Action", "UserName")),
+        new CustomColumn("IpAddress", ev => GetJsonValue(ev, "Action", "IpAddress")),
+        new CustomColumn("ActionParameters", ev => GetJsonValue(ev, "Action", "ActionParameters"))
+    }
+};
 
-// Use custom audit data provider
-Audit.Core.Configuration.Setup()
-    .UseCustomProvider(new CustomAuditDataProvider(logFilePath));
+// Function to extract JSON value using path
+string GetJsonValue(AuditEvent ev, string pathToAction, string propertyName)
+{
+    var jsonData = ev.ToJson();
+    var jsonObject = JObject.Parse(jsonData);
+    var action = jsonObject[pathToAction];
+    return action?[propertyName]?.ToString();
+}
 
 // Register application services
 RegisterServices(builder.Services);
@@ -114,3 +134,5 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+
